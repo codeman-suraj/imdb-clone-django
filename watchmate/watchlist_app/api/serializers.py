@@ -1,21 +1,44 @@
 from rest_framework import serializers
-from watchlist_app.models import Watchlist, StreamPlatforms
+from watchlist_app.models import Watchlist, StreamPlatforms, Review
 from django.utils.timezone import now
 
 
 # ************************************** model serializer **************************************
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
 class WatchlistSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Watchlist
         fields = '__all__'
         # fields = ['id', 'title', 'storyline']        #you can try any of them
         # exclude = ['active']
-
+        
+        
 class StreamPlatformsSerializer(serializers.ModelSerializer):
+    # serializer relations
+    
+    watchlist = WatchlistSerializer(many=True, read_only=True)
+    # watchlist = serializers.StringRelatedField(many=True)   #it returns string level fields
+    # watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True) #it returns only primary key field
+    
+    # watchlist = serializers.HyperlinkedRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     view_name='watch-list-detail'
+    # )
+    
     class Meta:
         model = StreamPlatforms
         fields = '__all__'
+
 
 # ********************************  filed level validations ****************************************************
 
