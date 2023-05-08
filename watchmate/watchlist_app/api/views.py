@@ -2,6 +2,8 @@ from watchlist_app.models import (Watchlist, StreamPlatforms, Review)
 from . serializers import (WatchlistSerializer, StreamPlatformsSerializer, ReviewSerializer)
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
 # from rest_framework import mixins
 from rest_framework import generics
 # from rest_framework.decorators import api_view
@@ -10,6 +12,15 @@ from rest_framework import status
 
 
 # **************************** Class-based Views using generic class-based views (Concrete View Classes)***************************
+
+class ReviewCreate(generics.CreateAPIView):
+    serializer_class = ReviewSerializer
+    
+    def perform_create(self, serializer):
+        pk = self.kwargs.get('pk')
+        watchlist = Watchlist.objects.get(pk=pk)
+        
+        serializer.save(watchlist=watchlist)
 
 class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()
@@ -22,6 +33,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    
 
 # **************************************************************** Class-based Views using mixins ***********************************
 # class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
@@ -87,7 +99,19 @@ class MovieDetailAV(APIView):
         movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+#*************************** writing views using viewsets and routing *******************
+
+class StreamPlatformsvs(viewsets.ViewSet):
+    def list(self, request):
+        queryset = StreamPlatforms.objects.all()
+        serializer = StreamPlatformsSerializer(queryset, many=True)
+        return Response(serializer.data)
     
+    def retrieve(self, request, pk=None):
+        queryset = StreamPlatforms.objects.all()
+        watchlist = get_object_or_404(queryset, pk=pk)
+        serializer = StreamPlatformsSerializer(watchlist)
+        return Response(serializer.data)
     
 class StreamPlatformsAV(APIView):
     
@@ -130,9 +154,6 @@ class StreamPlatformsdetailsAV(APIView):
         streamlist = StreamPlatforms.objects.get(pk=pk)
         streamlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
 
 
 
