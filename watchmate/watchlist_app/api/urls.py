@@ -11,26 +11,26 @@ from . views import (MovieListAV, MovieDetailAV,
 
 from rest_framework.routers import DefaultRouter
 
-# router = DefaultRouter()
-# router.register('stream', StreamPlatformsvs, basename='streamplatform')
+router = DefaultRouter()
+router.register('stream', StreamPlatformsvs, basename='streamplatform')
 
 urlpatterns = [
     
-    path('watchlist/', MovieListAV.as_view(), name='watch-list'),
-    path('watchlist/<int:pk>/', MovieDetailAV.as_view(), name='watch-list-detail'),
+    path('list/', MovieListAV.as_view(), name='watch-list'),
+    path('list/<int:pk>/', MovieDetailAV.as_view(), name='watch-list-detail'),
     
-    # path('', include(router.urls)),
+    path('', include(router.urls)),
     
-    path('stream/', StreamPlatformsAV.as_view(), name='streamplatform'),
-    path('stream/<int:pk>/', StreamPlatformsdetailsAV.as_view(), name='Movie_details'),
+    # path('stream/', StreamPlatformsAV.as_view(), name='streamplatform'),
+    # path('stream/<int:pk>/', StreamPlatformsdetailsAV.as_view(), name='Movie_details'),
     
     # path('stream/review/', ReviewList.as_view(), name='ReviewList'),
     # path('stream/review/<int:pk>/', ReviewDetails.as_view(), name='ReviewDetails'),
     
     
-    path('stream/<int:pk>/review-create/', ReviewCreate.as_view(), name='review-create'),
-    path('stream/<int:pk>/review/', ReviewList.as_view(), name='ReviewList'),
-    path('stream/review/<int:pk>/', ReviewDetails.as_view(), name='ReviewDetails'),
+    path('<int:pk>/review-create/', ReviewCreate.as_view(), name='review-create'),
+    path('<int:pk>/review/', ReviewList.as_view(), name='ReviewList'),
+    path('review/<int:pk>/', ReviewDetails.as_view(), name='ReviewDetails'),
     
     
 ]
